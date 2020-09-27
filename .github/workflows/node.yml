@@ -22,7 +22,7 @@ jobs:
     - name: set git ENV
       env: 
         ACTION_DEPLOY_KEY: ${{ secrets.ACCESS_TOKEN }}
-      run:  
+      run: |
         git config user.name 'Levi'
         git config user.email 'levidcd@outlook.com'
   
