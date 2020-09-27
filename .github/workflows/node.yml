@@ -23,8 +23,8 @@ jobs:
       env: 
         ACTION_DEPLOY_KEY: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        git config user.name 'Levi'
-        git config user.email 'levidcd@outlook.com'
+        git config --global user.name 'github actions'
+        git config --global user.email 'levidcd@outlook.com'
   
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
