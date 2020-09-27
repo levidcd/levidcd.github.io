@@ -26,25 +26,21 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    
-    - name: Set git ENV
-      env: 
-        ACTION_DEPLOY_KEY: ${{ secrets.RSA }}
-      run: |
-        # set up private key for deploy
-        mkdir -p ~/.ssh/
-        echo "$ACTION_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa # 配置秘钥
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-        git config --global user.name 'levidcd'
-        git config --global user.email 'levidcd@outlook.com'
-  
+    - name: Some build
 
-    - name: Install
-      run: npm install 
+    - name: Prepare tag
+      id: prepare_tag
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        TAG_NAME="${GITHUB_REF##refs/tags/}"
+        echo "::set-output name=tag_name::${TAG_NAME}"
+        echo "::set-output name=deploy_tag_name::deploy-${TAG_NAME}"  
       
-    - name: Publish
-      run: npm run deploy
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3.6.4
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_dir: ./public
+        tag_name: ${{ steps.prepare_tag.outputs.deploy_tag_name }}
+        tag_message: 'Deployment ${{ steps.prepare_tag.outputs.tag_name }}'
         
