@@ -19,7 +19,15 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - name: set git ENV
+    - name: Checkout
+      uses: actions/checkout@v2
+          
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Set git ENV
       env: 
         ACTION_DEPLOY_KEY: ${{ secrets.RSA }}
       run: |
@@ -31,14 +39,11 @@ jobs:
         git config --global user.name 'github actions'
         git config --global user.email 'levidcd@outlook.com'
   
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: install
+
+    - name: Install
       run: npm install 
-    - name: publish
+      
+    - name: Publish
       run: npm run deploy
       env:
         NODE_AUTH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
